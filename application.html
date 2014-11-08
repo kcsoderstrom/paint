@@ -11,25 +11,27 @@
   <header>
     <canvas id="sloth_01"></canvas>
     <canvas id="sloth_02"></canvas>
-    <img id="02" src="./images_of_sloths/02.gif">
   </header>
   <main>
-    <canvas id="drawing-canvas" width="100" height="100"></canvas>
+    <canvas id="drawing-canvas" width="1000" height="300"></canvas>
   </main>
   <footer></footer>
 
   <script>
     var imgs = [];
-    var ctxs = [];
+    var cnvs = [];
     for(var i = 0; i < 2; i += 1) {
       imgs.push( new Image() );
       imgs[i].src = "images_of_sloths/" + "0" + (i + 1) + ".png";
-      ctxs.push(document.getElementById("sloth_0" + (i + 1)).getContext("2d"));
+      cnvs.push(document.getElementById("sloth_0" + (i + 1)));
     }
 
     imgs.forEach(function(img, idx) {
       $(img).on("load", function() {
-        ctxs[idx].drawImage(img, 0, 0);
+        cnvs[idx].width = img.width;
+        cnvs[idx].height = img.height;
+        cnvs[idx].getContext("2d").clearRect(0,0,300,150);
+        cnvs[idx].getContext("2d").drawImage(img, 0, 0);
       });
     })
 

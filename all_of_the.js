@@ -1,6 +1,6 @@
 var SlothCanvas = function(canvasEl) {
   this.ctx = canvasEl.getContext("2d");
-  this.selected_sloth_src = null;
+  this.selected_sloth = null;
 };
 
 SlothCanvas.prototype.start = function() {
@@ -17,17 +17,20 @@ SlothCanvas.prototype.start = function() {
 
   $("#drawing-canvas").on("mousemove", function(event){
     if(mouse_is_down) {
-      var x = event.pageX - 10;
-      var y = event.pageY - 110;
-      console.log(x);
-
-      ctx.fillStyle = "rgba(0,0,0,1)";
-      ctx.fillRect(x,y,10,10);
+      if(that.selected_sloth) {
+        var x = event.pageX - 10 - $(that.selected_sloth).width()/2;
+        var y = event.pageY - 110 - $(that.selected_sloth).height()/2;
+        ctx.drawImage(that.selected_sloth, x, y);
+      }
     }
   });
 
-  $("img#01").on("click", function() {
-    that.selected_sloth_src = getElementById("01");
+  $("canvas").on("click", function(event) {
+    if($(event.currentTarget).attr("id") === "drawing-canvas") {
+      return;
+    }
+
+    that.selected_sloth = event.currentTarget;
   });
 
 
