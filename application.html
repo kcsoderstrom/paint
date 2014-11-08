@@ -4,10 +4,20 @@
   <link href="header.css" type="text/css" rel="stylesheet">
   <link href="main.css" type="text/css" rel="stylesheet">
   <link href="footer.css" type="text/css" rel="stylesheet">
+  <script src="jquery-2.1.1.min.js"></script>
+  <script src="all_of_the.js"></script>
 </head>
 <body>
   <header></header>
-  <main></main>
+  <main>
+    <canvas id="drawing-canvas"></canvas>
+  </main>
   <footer></footer>
 </body>
+
+  <script>
+    var canvasEl = document.getElementById("drawing-canvas");
+    var canvs = new SlothCanvas(canvasEl);
+    canvs.start();
+  </script>
 </html>
