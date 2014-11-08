@@ -7,3 +7,10 @@ main {
   left: 0;
   right: 0;
 }
+
+canvas {
+  background: white;
+  cursor: crosshair;
+  resize: auto;
+  box-sizing: border-box;
+}

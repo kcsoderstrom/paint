@@ -8,16 +8,35 @@
   <script src="all_of_the.js"></script>
 </head>
 <body>
-  <header></header>
+  <header>
+    <canvas id="sloth_01"></canvas>
+    <canvas id="sloth_02"></canvas>
+    <img id="02" src="./images_of_sloths/02.gif">
+  </header>
   <main>
-    <canvas id="drawing-canvas"></canvas>
+    <canvas id="drawing-canvas" width="100" height="100"></canvas>
   </main>
   <footer></footer>
-</body>
 
   <script>
+    var imgs = [];
+    var ctxs = [];
+    for(var i = 0; i < 2; i += 1) {
+      imgs.push( new Image() );
+      imgs[i].src = "images_of_sloths/" + "0" + (i + 1) + ".png";
+      ctxs.push(document.getElementById("sloth_0" + (i + 1)).getContext("2d"));
+    }
+
+    imgs.forEach(function(img, idx) {
+      $(img).on("load", function() {
+        ctxs[idx].drawImage(img, 0, 0);
+      });
+    })
+
     var canvasEl = document.getElementById("drawing-canvas");
     var canvs = new SlothCanvas(canvasEl);
     canvs.start();
   </script>
+
+</body>
 </html>
