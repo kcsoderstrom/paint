@@ -25,6 +25,122 @@ SlothCanvas.prototype.start = function() {
     }
   });
 
+  $("#drawing-canvas").on("mousemove", function(event){
+    if(mouse_is_down) {
+      if(that.selected_sloth) {
+        var x = event.pageX - 10 - $(that.selected_sloth).width()/2;
+        var y = event.pageY - 110 - $(that.selected_sloth).height()/2;
+        ctx.drawImage(that.selected_sloth, x, y);
+      }
+    }
+  });
+
+
+$("#drawing-canvas").on("mousemove", function(event){
+  if(mouse_is_down) {
+    if(that.selected_sloth) {
+      var x = event.pageX - 10 - $(that.selected_sloth).width()/2;
+      var y = event.pageY - 110 - $(that.selected_sloth).height()/2;
+      ctx.drawImage(that.selected_sloth, x, y);
+    }
+  }
+});
+
+
+$("#drawing-canvas").on("mousemove", function(event){
+  if(mouse_is_down) {
+    if(that.selected_sloth) {
+      var x = event.pageX - 10 - $(that.selected_sloth).width()/2;
+      var y = event.pageY - 110 - $(that.selected_sloth).height()/2;
+      ctx.drawImage(that.selected_sloth, x, y);
+    }
+  }
+});
+
+
+$("#drawing-canvas").on("mousemove", function(event){
+  if(mouse_is_down) {
+    if(that.selected_sloth) {
+      var x = event.pageX - 10 - $(that.selected_sloth).width()/2;
+      var y = event.pageY - 110 - $(that.selected_sloth).height()/2;
+      ctx.drawImage(that.selected_sloth, x, y);
+    }
+  }
+});
+
+
+$("#drawing-canvas").on("mousemove", function(event){
+  if(mouse_is_down) {
+    if(that.selected_sloth) {
+      var x = event.pageX - 10 - $(that.selected_sloth).width()/2;
+      var y = event.pageY - 110 - $(that.selected_sloth).height()/2;
+      ctx.drawImage(that.selected_sloth, x, y);
+    }
+  }
+});
+
+
+$("#drawing-canvas").on("mousemove", function(event){
+  if(mouse_is_down) {
+    if(that.selected_sloth) {
+      var x = event.pageX - 10 - $(that.selected_sloth).width()/2;
+      var y = event.pageY - 110 - $(that.selected_sloth).height()/2;
+      ctx.drawImage(that.selected_sloth, x, y);
+    }
+  }
+});
+
+
+$("#drawing-canvas").on("mousemove", function(event){
+  if(mouse_is_down) {
+    if(that.selected_sloth) {
+      var x = event.pageX - 10 - $(that.selected_sloth).width()/2;
+      var y = event.pageY - 110 - $(that.selected_sloth).height()/2;
+      ctx.drawImage(that.selected_sloth, x, y);
+    }
+  }
+});
+
+$("#drawing-canvas").on("mousemove", function(event){
+  if(mouse_is_down) {
+    if(that.selected_sloth) {
+      var x = event.pageX - 10 - $(that.selected_sloth).width()/2;
+      var y = event.pageY - 110 - $(that.selected_sloth).height()/2;
+      ctx.drawImage(that.selected_sloth, x, y);
+    }
+  }
+});
+
+
+$("#drawing-canvas").on("mousemove", function(event){
+  if(mouse_is_down) {
+    if(that.selected_sloth) {
+      var x = event.pageX - 10 - $(that.selected_sloth).width()/2;
+      var y = event.pageY - 110 - $(that.selected_sloth).height()/2;
+      ctx.drawImage(that.selected_sloth, x, y);
+    }
+  }
+});
+
+$("#drawing-canvas").on("mousemove", function(event){
+  if(mouse_is_down) {
+    if(that.selected_sloth) {
+      var x = event.pageX - 10 - $(that.selected_sloth).width()/2;
+      var y = event.pageY - 110 - $(that.selected_sloth).height()/2;
+      ctx.drawImage(that.selected_sloth, x, y);
+    }
+  }
+});
+
+
+  $("#drawing-canvas").on("mousedown", function(event){
+    if(that.selected_sloth) {
+      var x = event.pageX - 10 - $(that.selected_sloth).width()/2;
+      var y = event.pageY - 110 - $(that.selected_sloth).height()/2;
+      ctx.drawImage(that.selected_sloth, x, y);
+    }
+  });
+
   $("canvas").on("click", function(event) {
     if($(event.currentTarget).attr("id") === "drawing-canvas") {
       return;
