@@ -5,16 +5,14 @@ var SlothCanvas = function(canvasEl) {
 };
 
 SlothCanvas.prototype.draw = function(event) {
-  console.log("starting at", this.last_pos);
-  var x = event.pageX - 10 - $(this.selected_sloth).width()/2;
-  var y = event.pageY - 110 - $(this.selected_sloth).height()/2;
-  console.log("trying to end at", x, y)
+  var x = event.pageX - 10 - document.getElementById("full_prep_box").width/2;
+  var y = event.pageY - 110 - document.getElementById("full_prep_box").height/2;
+
   if(event.type === "mousemove") {
     this.inBetween(x, y);
   }
-  this.ctx.drawImage(this.selected_sloth, x, y);
+  this.ctx.drawImage(document.getElementById("full_prep_box"), x, y);
   this.last_pos = [x,y];
-  console.log("ending at", this.last_pos);
 }
 
 SlothCanvas.prototype.x = function () {
@@ -56,25 +54,105 @@ SlothCanvas.prototype.inBetween = function (x, y) {
       current_x += x_sign;
     }
 
-    this.ctx.drawImage(this.selected_sloth, current_x, current_y);
+    this.ctx.drawImage(document.getElementById("full_prep_box"), current_x, current_y);
   }
 };
 
 SlothCanvas.prototype.start = function() {
   var mouse_is_down = false;
   var that = this;
-  var _i = 0;
+  //var _i = 0;
+
+  $("#prep_box").on("dblclick", function(event) {
+    $(".prep-modal").addClass("active");
+    $(".wax-paper").addClass("shady");
+  });
+
+  $(".wax-paper").on("click", function(event){
+    $(".prep-modal").removeClass("active");
+    $(".wax-paper").removeClass("shady");
+  })
 
   $(window).on("mousedown", function(event){
+    if($(event.target).attr("id") === "prep_box" || $(event.target).attr("id") === "full_prep_box") {
+      that.prepPos = [event.pageX, event.pageY];
+    }
     mouse_is_down = true;
   });
 
+
+  var prepareImage = function(event){
+    if(mouse_is_down && that.prepPos) {
+      // center is at 51, 51
+      // or at window.innerWidth/2, 350
+
+      if($(event.currentTarget).attr("id") === "prep_box") {
+        var center = [51, 51];
+      } else if($(event.currentTarget).attr("id") === "full_prep_box") {
+        var center = [window.innerWidth/2, 350];
+      }
+
+      var thisPos = [event.pageX, event.pageY]
+      var startDist = Math.sqrt(Math.pow(that.prepPos[0] - center[0], 2) + Math.pow(that.prepPos[1] - center[1], 2));
+      var newDist = Math.sqrt(Math.pow(thisPos[0] - center[0], 2) + Math.pow(thisPos[1] - center[1], 2));
+      var scaleFactor = startDist === 0 ? 1 : newDist / startDist;
+
+      var banana = document.createElement('canvas');
+
+      var full_original = new Image();
+      full_original.src = origImgs[ $(that.selected_sloth).attr("id")[7] ].src;
+      var newWidth = that.oldSize * scaleFactor;
+      full_original.onload = function() {
+        banana.width = newWidth;
+        banana.height = full_original.height * newWidth / full_original.width;
+        var bctx = banana.getContext("2d");
+
+
+        //var dy = thisPos[1] - that.prepPos[1];
+        //var dx = thisPos[0] - that.prepPos[0];
+
+
+        if(that.prepPos[0] < center[0]) {
+          var angleOfOriginalClick = Math.atan((that.prepPos[1] - center[1])/(that.prepPos[0] - center[0])) + Math.PI;
+        } else {
+          var angleOfOriginalClick = Math.atan((that.prepPos[1] - center[1])/(that.prepPos[0] - center[0]));
+        }
+
+        if(thisPos[0] < center[0]) {
+          var angleOfThisClick = Math.atan((thisPos[1] - center[1])/(thisPos[0] - center[0])) + Math.PI;
+        } else {
+          var angleOfThisClick = Math.atan((thisPos[1] - center[1])/(thisPos[0] - center[0]));
+        }
+
+
+        bctx.translate( banana.width / 2, banana.height / 2);
+        bctx.rotate( angleOfThisClick - angleOfOriginalClick );
+        bctx.translate( -banana.width / 2, -banana.height / 2);
+
+        bctx.scale(newWidth / full_original.width, newWidth / full_original.width);
+        bctx.drawImage(full_original,0,0);
+
+        var prepBoxCtx = event.currentTarget.getContext("2d");
+        prepBoxCtx.clearRect(0,0,$(event.currentTarget).width(),$(event.currentTarget).height());
+
+        prepBoxCtx.drawImage(banana, $(event.currentTarget).width()/2 - newWidth / 2, $(event.currentTarget).height()/2 - full_original.height * newWidth / full_original.width / 2);
+        //that.ctx.drawImage(banana, 0, 0);
+        //that.ctx.drawImage(full_original, 0, 0);
+        //that.prepPos = thisPos;
+      }
+    }
+  };
+
+  $("#prep_box").on("mousemove", prepareImage.bind($("#prep_box")));
+  $("#full_prep_box").on("mousemove", prepareImage.bind($("prep_box")));
+
   $(window).on("mouseup", function(event){
     mouse_is_down = false;
+    that.prepPos = null;
   });
 
   $("#drawing-canvas").on("mousemove", function(event){
-    if(mouse_is_down) {
+    if(mouse_is_down && !that.prepPos) {
       if(that.selected_sloth) {
         that.draw(event);
       }
@@ -93,8 +171,28 @@ SlothCanvas.prototype.start = function() {
       return;
     }
 
-    that.selected_sloth = event.currentTarget;
+    if($(event.currentTarget).hasClass("icon")) {
+      that.selected_sloth = event.currentTarget;
+      document.getElementById("prep_box").getContext("2d").clearRect(0,0,100,100);
+      document.getElementById("full_prep_box").getContext("2d").clearRect(0,0,500,500);
+      document.getElementById("prep_box").getContext("2d").drawImage(that.selected_sloth, 35 - $(that.selected_sloth).width() / 2, 35 - $(that.selected_sloth).height() / 2);
+      document.getElementById("full_prep_box").getContext("2d").drawImage(that.selected_sloth, 250 - $(that.selected_sloth).width() / 2, 250 - $(that.selected_sloth).height() / 2);
+      that.oldSize = 50; // The standard width of an icon
+      that.angle = 0;
+    }
+
   });
 
+  $("button.clear").on("click", function(event){
+    event.preventDefault();
+    var drawingCanvas = document.getElementById("drawing-canvas");
+    drawingCanvas.getContext("2d").clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+  });
+
+  $("a.save").on("click", function(event){
+    event.preventDefault();
+    var dataURL = document.getElementById("drawing-canvas").toDataURL('image/png').replace("image/png", "image/octet-stream");
+    window.location.href = dataURL;
+  })
 
 };

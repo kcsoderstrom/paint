@@ -4,3 +4,46 @@ header {
   position: fixed;
   background: linear-gradient(#ffffff, #DCE7F5);
 }
+
+header:after {
+  clear: both;
+  content: "";
+  display: block;
+}
+
+ul {
+  background: white;
+  border: 1px solid #a8b9d0;
+  border-radius: 4px;
+  display: block;
+  float: left;
+  padding: 10px;
+  margin-top: 18px;
+}
+
+ul:after {
+  clear: both;
+  content: "";
+  display: block;
+}
+
+li {
+  display: block;
+  float: left;
+  margin: 0 10px;
+}
+
+#prep_box {
+  margin: 15px;
+  border: 1px solid #a8b9d0;
+  border-radius: 4px;
+  display: block;
+  float: left;
+}
+
+.icon {
+  border: 1px solid #a8b9d0;
+  border-radius: 4px;
+  display: block;
+  float: left;
+}

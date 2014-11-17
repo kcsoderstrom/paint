@@ -9,21 +9,45 @@
 </head>
 <body>
   <header>
-    <canvas id="sloth_01"></canvas>
-    <canvas id="sloth_02"></canvas>
+    <canvas class="prep" id="prep_box" width=70 height=70></canvas>
+    <ul>
+      <li><canvas class="icon" id="sloth_00"></canvas></li>
+      <li><canvas class="icon" id="sloth_01"></canvas></li>
+      <li><canvas class="icon" id="sloth_02"></canvas></li>
+      <li><canvas class="icon" id="sloth_03"></canvas></li>
+      <li><canvas class="icon" id="sloth_04"></canvas></li>
+      <li><canvas class="icon" id="sloth_05"></canvas></li>
+      <li><canvas class="icon" id="sloth_06"></canvas></li>
+      <li><canvas class="icon" id="sloth_07"></canvas></li>
+      <li><canvas class="icon" id="sloth_08"></canvas></li>
+      <li><canvas class="icon" id="sloth_09"></canvas></li>
+    </ul>
+
+    <button class="clear button">CLEAR CANVAS OK</button>
+    <a href="#" class="button save">Save</a>
   </header>
   <main>
     <canvas id="drawing-canvas" width="1000" height="300"></canvas>
+
   </main>
   <footer></footer>
 
+  <div class="wax-paper"></div>
+  <section class="prep-modal">
+    <canvas class="prep" id="full_prep_box" width=500 height=500></canvas>
+  </section>
+
   <script>
     var imgs = [];
+    var origImgs = [];
     var cnvs = [];
-    for(var i = 0; i < 2; i += 1) {
+    for(var i = 0; i < 10; i += 1) {
       imgs.push( new Image() );
-      imgs[i].src = "images_of_sloths/" + "0" + (i + 1) + ".png";
-      cnvs.push(document.getElementById("sloth_0" + (i + 1)));
+      imgs[i].src = "images_of_sloths/" + "0" + i + "i.png";
+      imgs[i].crossOrigin = document.domain;
+      origImgs.push( new Image() );
+      origImgs[i].src = "images_of_sloths/" + "0" + i + ".png";
+      cnvs.push(document.getElementById("sloth_0" + i));
     }
 
     imgs.forEach(function(img, idx) {

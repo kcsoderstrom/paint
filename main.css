@@ -14,3 +14,32 @@ canvas#drawing-canvas {
   resize: auto;
   box-sizing: border-box;
 }
+
+div.wax-paper {
+  display: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.2);
+}
+
+div.wax-paper.shady {
+  display: block;
+}
+
+section.prep-modal {
+  display: none;
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-250px);
+  background: linear-gradient(#DDD, #DCE7F5);
+  border: 1px solid #a8b9d0;
+  border-radius: 10px;
+}
+
+section.prep-modal.active {
+  display: block;
+}
