@@ -138,10 +138,23 @@ SlothCanvas.prototype.start = function() {
         bctx.scale(newWidth / full_original.width, newWidth / full_original.width);
         bctx.drawImage(full_original,0,0);
 
-        var prepBoxCtx = event.currentTarget.getContext("2d");
-        prepBoxCtx.clearRect(0,0,$(event.currentTarget).width(),$(event.currentTarget).height());
+        var prepBox = document.getElementById("prep_box");
+        var fullPrep = document.getElementById("full_prep_box");
+        var prepBoxCtx = prepBox.getContext("2d");
+        var fullPrepCtx = fullPrep.getContext("2d");
 
-        prepBoxCtx.drawImage(banana, $(event.currentTarget).width()/2 - newWidth / 2, $(event.currentTarget).height()/2 - full_original.height * newWidth / full_original.width / 2);
+        var prepHeight = prepBox.height;
+        var prepWidth = prepBox.width;
+        var fullHeight = fullPrep.height;
+        var fullWidth = fullPrep.width;
+
+        //var prepBoxCtx = event.currentTarget.getContext("2d");
+        //prepBoxCtx.clearRect(0,0,$(event.currentTarget).width(),$(event.currentTarget).height());
+        prepBoxCtx.clearRect(0,0,prepWidth,prepHeight);
+        fullPrepCtx.clearRect(0,0,fullWidth,fullHeight);
+
+        prepBoxCtx.drawImage(banana, prepWidth/2 - newWidth/2, prepHeight/2 - full_original.height * newWidth / full_original.width / 2);
+        fullPrepCtx.drawImage(banana, fullWidth/2 - newWidth / 2, fullHeight/2 - full_original.height * newWidth / full_original.width / 2);
         //that.ctx.drawImage(banana, 0, 0);
         //that.ctx.drawImage(full_original, 0, 0);
         //that.prepPos = thisPos;
@@ -169,12 +182,14 @@ SlothCanvas.prototype.start = function() {
       inMemCanvas.width = canv.width;
       inMemCanvas.height = canv.height;
       inMemCtx = inMemCanvas.getContext("2d");
-      console.log(inMemCtx)
       inMemCtx.drawImage(canv, 0, 0);
       document.getElementById("drawing-canvas").width = event.pageX - 10;
       document.getElementById("drawing-canvas").height = event.pageY - 110;
       ctx.drawImage(inMemCanvas, 0, 0);
     }
+
+    $(".line.vertical").css("left", event.pageX);
+    $(".line.horizontal").css("top", event.pageY);
   });
 
 
