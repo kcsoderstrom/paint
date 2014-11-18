@@ -43,3 +43,14 @@ section.prep-modal {
 section.prep-modal.active {
   display: block;
 }
+
+button#resize-canvas {
+  height: 8px;
+  width: 8px;
+  background: white;
+  position: relative;
+  top: 8px;
+  left: -3px;
+  border: 1px solid black;
+  z-index: 10;
+}

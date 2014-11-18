@@ -60,8 +60,10 @@ SlothCanvas.prototype.inBetween = function (x, y) {
 
 SlothCanvas.prototype.start = function() {
   var mouse_is_down = false;
+  var mouse_down_on_resize_button = false;
+  var inMemCanvas = document.createElement('canvas');
+  var inMemCtx = inMemCanvas.getContext("2d");
   var that = this;
-  //var _i = 0;
 
   $("#prep_box").on("dblclick", function(event) {
     $(".prep-modal").addClass("active");
@@ -77,9 +79,13 @@ SlothCanvas.prototype.start = function() {
     if($(event.target).attr("id") === "prep_box" || $(event.target).attr("id") === "full_prep_box") {
       that.prepPos = [event.pageX, event.pageY];
     }
-    mouse_is_down = true;
-  });
 
+    if($(event.target).attr("id") === "resize-canvas") {
+      mouse_down_on_resize_button = true;
+    } else {
+      mouse_is_down = true;
+    }
+  });
 
   var prepareImage = function(event){
     if(mouse_is_down && that.prepPos) {
@@ -147,15 +153,27 @@ SlothCanvas.prototype.start = function() {
   $("#full_prep_box").on("mousemove", prepareImage.bind($("prep_box")));
 
   $(window).on("mouseup", function(event){
+    mouse_down_on_resize_button = false;
     mouse_is_down = false;
     that.prepPos = null;
   });
 
-  $("#drawing-canvas").on("mousemove", function(event){
+  $(window).on("mousemove", function(event){
     if(mouse_is_down && !that.prepPos) {
       if(that.selected_sloth) {
         that.draw(event);
       }
+    } else if(mouse_down_on_resize_button) {
+      var canv = document.getElementById("drawing-canvas")
+      var ctx = canv.getContext("2d");
+      inMemCanvas.width = canv.width;
+      inMemCanvas.height = canv.height;
+      inMemCtx = inMemCanvas.getContext("2d");
+      console.log(inMemCtx)
+      inMemCtx.drawImage(canv, 0, 0);
+      document.getElementById("drawing-canvas").width = event.pageX - 10;
+      document.getElementById("drawing-canvas").height = event.pageY - 110;
+      ctx.drawImage(inMemCanvas, 0, 0);
     }
   });
 
@@ -193,6 +211,5 @@ SlothCanvas.prototype.start = function() {
     event.preventDefault();
     var dataURL = document.getElementById("drawing-canvas").toDataURL('image/png').replace("image/png", "image/octet-stream");
     window.location.href = dataURL;
-  })
-
+  });
 };

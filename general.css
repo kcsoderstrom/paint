@@ -1,4 +1,4 @@
-html, body, header, main, footer, ul, li {
+html, body, header, main, footer, ul, li, button, canvas {
   border: 0;
   margin: 0;
   padding: 0;
@@ -6,6 +6,7 @@ html, body, header, main, footer, ul, li {
   background: transparent;
   text-decoration: none;
   list-style: none;
+  outline: none;
 }
 
 html, body {
