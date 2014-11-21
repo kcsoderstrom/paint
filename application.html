@@ -8,9 +8,10 @@
   <script src="all_of_the.js"></script>
 </head>
 <body>
+  <div class="bg"></div>
   <header>
     <canvas class="prep" id="prep_box" width=70 height=70></canvas>
-    <ul>
+    <ul class="icons">
       <li><canvas class="icon" id="sloth_00"></canvas></li>
       <li><canvas class="icon" id="sloth_01"></canvas></li>
       <li><canvas class="icon" id="sloth_02"></canvas></li>
@@ -23,13 +24,17 @@
       <li><canvas class="icon" id="sloth_09"></canvas></li>
     </ul>
 
-    <button class="clear button">CLEAR CANVAS OK</button>
-    <a href="#" class="button save">Save</a>
+    <ul class="buttons">
+      <button class="clear button">Clear</button>
+      <a href="#" class="button save">Save</a>
+      <button class="undo">Undo</button>
+      <button class="redo">Redo</button>
+    </ul>
   </header>
   <main>
-    <div class="ruler top"><div class="line vertical"></div></div>
-    <div class="ruler left"><div class="line horizontal"></div></div>
-    <canvas id="drawing-canvas" width="1000" height="300"></canvas>
+    <div class="line horizontal"></div>
+    <div class="line vertical"></div>
+    <canvas id="drawing-canvas" width="500" height="500"></canvas>
     <button id="resize-canvas"></button>
   </main>
   <footer></footer>
@@ -40,6 +45,7 @@
   </section>
 
   <script>
+
     var imgs = [];
     var origImgs = [];
     var cnvs = [];
