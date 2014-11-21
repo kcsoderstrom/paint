@@ -19,27 +19,6 @@ main {
   padding-bottom: 32px;
 }
 
-/*div.ruler.top {
-  background: url("ruler-top.png") no-repeat 0 -1px;
-  position: absolute;
-  top: 100px;
-  left: 0px;
-  display: block;
-  height: 20px;
-  width: 100%;
-  overflow: hidden;
-}*/
-
-/*div.ruler.left {
-  background: url("ruler-left.png") no-repeat -2px 1px;
-  position: absolute;
-  top: 100px;
-  left: 0px;
-  width: 20px;
-  height: 100%;
-  overflow: hidden;
-}*/
-
 div.line.horizontal {
   left: 0;
   position: absolute;
@@ -81,9 +60,9 @@ div.wax-paper.shady {
 section.prep-modal {
   display: none;
   position: absolute;
-  top: 100px;
+  top: 20%;
   left: 50%;
-  transform: translateX(-250px);
+  transform: translateX(-200px);
   background: linear-gradient(#DDD, #DCE7F5);
   border: 1px solid #a8b9d0;
   border-radius: 10px;
@@ -102,4 +81,37 @@ button#resize-canvas {
   left: -3px;
   border: 1px solid black;
   z-index: 10;
+}
+
+section.menu {
+  height: 100px;
+  width: 100px;
+  padding: 20px;
+  position: absolute;
+  top: 30%;
+  left: 80%;
+}
+
+section.menu label {
+  display: block;
+  margin: 20px 0;
+  float: left;
+}
+
+section.menu input {
+  width: 20px;
+  float: left;
+  /*appearance: none;*/
+  /*-webkit-appearance: none;*/
+}
+
+div.handle {
+  position: absolute;
+  border-radius: 10px 10px 0 0;
+  background: white;
+  left: -1px;
+  top: 0;
+  width: 100%;
+  height: 20px;
+  border: 1px solid #a8b9d0;
 }

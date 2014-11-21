@@ -9,39 +9,53 @@
 </head>
 <body>
   <div class="bg"></div>
-  <header>
+  <header class="group">
     <canvas class="prep" id="prep_box" width=70 height=70></canvas>
-    <ul class="icons">
-      <li><canvas class="icon" id="sloth_00"></canvas></li>
-      <li><canvas class="icon" id="sloth_01"></canvas></li>
-      <li><canvas class="icon" id="sloth_02"></canvas></li>
-      <li><canvas class="icon" id="sloth_03"></canvas></li>
-      <li><canvas class="icon" id="sloth_04"></canvas></li>
-      <li><canvas class="icon" id="sloth_05"></canvas></li>
-      <li><canvas class="icon" id="sloth_06"></canvas></li>
-      <li><canvas class="icon" id="sloth_07"></canvas></li>
-      <li><canvas class="icon" id="sloth_08"></canvas></li>
-      <li><canvas class="icon" id="sloth_09"></canvas></li>
-    </ul>
+    <button class="closeup"></button>
+    <div class="nav group">
+      <ul class="icons group">
+        <li><canvas class="icon" id="sloth_00"></canvas></li>
+        <li><canvas class="icon" id="sloth_01"></canvas></li>
+        <li><canvas class="icon" id="sloth_02"></canvas></li>
+        <li><canvas class="icon" id="sloth_03"></canvas></li>
+        <li><canvas class="icon" id="sloth_04"></canvas></li>
+        <li><canvas class="icon" id="sloth_05"></canvas></li>
+        <li><canvas class="icon" id="sloth_06"></canvas></li>
+        <li><canvas class="icon" id="sloth_07"></canvas></li>
+        <li><canvas class="icon" id="sloth_08"></canvas></li>
+        <li><canvas class="icon" id="sloth_09"></canvas></li>
+      </ul>
+    </div>
 
-    <ul class="buttons">
-      <button class="clear button">Clear</button>
-      <a href="#" class="button save">Save</a>
-      <button class="undo">Undo</button>
-      <button class="redo">Redo</button>
+    <ul class="buttons group">
+      <li>
+        <button class="clear button">Clear</button>
+        <a href="#" class="button save">Save</a>
+      </li>
+      <li>
+        <button class="undo">Undo</button>
+        <button class="redo">Redo</button>
+      </li>
     </ul>
   </header>
   <main>
     <div class="line horizontal"></div>
     <div class="line vertical"></div>
-    <canvas id="drawing-canvas" width="500" height="500"></canvas>
+    <canvas id="drawing-canvas" width="200" height="200"></canvas>
     <button id="resize-canvas"></button>
   </main>
-  <footer></footer>
+  <footer>A client-side app by Heidi Et Al for Ben and Lizzie</footer>
 
   <div class="wax-paper"></div>
   <section class="prep-modal">
-    <canvas class="prep" id="full_prep_box" width=500 height=500></canvas>
+    <canvas class="prep" id="full_prep_box" width=400 height=400></canvas>
+  </section>
+  <section class="prep-modal menu">
+    <div class="handle"></div>
+    <label for="scale-factor">Size</label>
+    <input type="number" id="scale-factor">
+    <label for="angle">Rotation</angle>
+    <input type="number" id="angle">
   </section>
 
   <script>

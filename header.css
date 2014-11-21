@@ -1,16 +1,24 @@
 header {
   width: 100%;
   min-height: 100px;
-  /*position: fixed;*/
   background: linear-gradient(#ffffff, #DCE7F5);
   border: 1px solid transparent;
   box-sizing: border-box;
 }
 
-header:after {
-  clear: both;
+div.nav {
+  float: left;
+  position: relative;
+  display: block;
+  max-height: 100%;
+  margin-left: 100px;
+  padding: 18px;
+}
+
+.group:after {
   content: "";
   display: block;
+  clear: both;
 }
 
 ul.icons {
@@ -18,38 +26,40 @@ ul.icons {
   border: 1px solid #a8b9d0;
   border-radius: 4px;
   display: block;
-  margin-left: 100px;
-  margin-right: 210px;
-  margin-top: 18px;
-  margin-bottom: 18px;
   padding: 10px;
+  left: 0;
   min-width: 70px;
+  float: left;
+  margin-right: 210px;
+  /*margin-bottom: 18px;*/
+  max-height: 200px;
+  overflow-y: auto;
+  /*max-width: 75%;*/
 }
 
 ul.buttons {
-  width: 180px;
-  height: 80px;
   position: absolute;
-  right: 10px;
-  top: 10px;
+  right: 8px;
+  top: 13px;
+  max-width: 25%;
+  float: right;
 }
 
-ul:after {
-  clear: both;
-  content: "";
-  display: block;
-}
-
-li {
+ul.icons li {
   display: block;
   float: left;
   margin: 10px;
 }
 
+ul.buttons li {
+  display: block;
+  float: right;
+}
+
 #prep_box {
   position: absolute;
-  top: 15px;
-  left: 15px;
+  top: 18px;
+  left: 18px;
   border: 1px solid #a8b9d0;
   border-radius: 4px;
   display: block;
@@ -64,11 +74,25 @@ li {
 
 header button, header a.button {
   margin: 5px 10px;
-  padding: 10px;
+  padding: 8px;
+  width: 60px;
   border: 1px solid #a8b9d0;
   background: linear-gradient(#ffffff, #EEE8E7);
   float: left;
   cursor: pointer;
   overflow: hidden;
   border-radius: 5px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+button.closeup {
+  position: absolute;
+  cursor: pointer;
+  background: url("magnifying_glass.png") no-repeat center center;
+  top: 65px;
+  left: 60px;
+  width: 30px;
+  height: 30px;
+  background-color: white;
 }

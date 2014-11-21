@@ -1,4 +1,4 @@
-html, body, header, main, footer, ul, li, button, canvas {
+html, body, header, main, footer, ul, li, button, canvas, button, a {
   border: 0;
   margin: 0;
   padding: 0;
@@ -7,8 +7,18 @@ html, body, header, main, footer, ul, li, button, canvas {
   text-decoration: none;
   list-style: none;
   outline: none;
+  color: black;
 }
 
 html, body {
   height: 100%;
+  font-family: sans-serif;
+}
+
+* {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }

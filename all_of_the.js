@@ -8,6 +8,13 @@ var SlothCanvas = function(canvasEl) {
   this.tempAngle = 0;
   this.undoStates = new Array();
   this.redoStates = new Array();
+
+  var drawingCanvas = document.getElementById("drawing-canvas");
+  var newSavedState = document.createElement("canvas");
+  newSavedState.width = drawingCanvas.width;
+  newSavedState.height = drawingCanvas.height;
+  newSavedState.getContext("2d").drawImage(drawingCanvas, 0, 0);
+  this.undoStates.push(newSavedState);
 };
 
 SlothCanvas.prototype.rotateCtx = function(obj) {
@@ -119,6 +126,28 @@ SlothCanvas.prototype.setTempScaleFactor = function (pos, center) {
   this.tempScaleFactor = startDist === 0 ? 1 : newDist / startDist * this.savedScaleFactor;
 };
 
+SlothCanvas.prototype.undo = function () {
+  if(this.undoStates.length) {
+    var drawingCanvas = document.getElementById("drawing-canvas");
+    this.redoStates.unshift(this.undoStates.pop());
+    var returnToState = this.undoStates[this.undoStates.length - 1];
+    drawingCanvas.width = returnToState.width;
+    drawingCanvas.height = returnToState.height;
+    drawingCanvas.getContext("2d").drawImage(returnToState, 0, 0);
+  }
+};
+
+SlothCanvas.prototype.redo = function () {
+  if(this.redoStates.length) {
+    var drawingCanvas = document.getElementById("drawing-canvas");
+    var returnToState = this.redoStates[0];
+    drawingCanvas.width = returnToState.width;
+    drawingCanvas.height = returnToState.height;
+    drawingCanvas.getContext("2d").drawImage(returnToState, 0, 0);
+    this.undoStates.push(this.redoStates.shift());
+  }
+};
+
 SlothCanvas.prototype.start = function() {
   var mouse_is_down = false;
   var mouse_down_on_resize_button = false;
@@ -132,10 +161,12 @@ SlothCanvas.prototype.start = function() {
 
     if(mouse_is_down && that.prepPos) {
 
-      if($(event.currentTarget).attr("id") === "prep_box") {
-        var center = [51, 51];
+      if($(event.target).attr("id") === "prep_box") {
+        var box = $("#prep_box");
+        var center = [box.offset().left + box.width() / 2, box.offset().top + box.height() / 2];
       } else {
-        var center = [window.innerWidth/2, 350];
+        var box = $("#full_prep_box");
+        var center = [window.innerWidth/2, box.offset().top + box.height() / 2];
       }
 
       var thisPos = [event.pageX, event.pageY];
@@ -195,7 +226,7 @@ SlothCanvas.prototype.start = function() {
   $(window).on("mouseup", function(event){
     // Store only up to 20 for memory's sake.
     // Only store if you're drawing.
-    if(that.drawing) {
+    if(that.drawing || mouse_down_on_resize_button) {
       var drawingCanvas = document.getElementById("drawing-canvas");
       var newSavedState = document.createElement("canvas");
       newSavedState.width = drawingCanvas.width;
@@ -232,35 +263,40 @@ SlothCanvas.prototype.start = function() {
       document.getElementById("drawing-canvas").width = event.pageX - $canv.offset().left;
       document.getElementById("drawing-canvas").height = event.pageY - $canv.offset().top;
       ctx.drawImage(inMemCanvas, 0, 0);
+
+      // var drawingCanvas = document.getElementById("drawing-canvas");
+      // var newSavedState = document.createElement("canvas");
+      // newSavedState.width = drawingCanvas.width;
+      // newSavedState.height = drawingCanvas.height;
+      // newSavedState.getContext("2d").drawImage(drawingCanvas, 0, 0);
+      // that.undoStates.push(newSavedState);
     }
 
     $(".line.vertical").css("top", $("main").offset().top);
-    $(".line.vertical").css("left", Math.max( event.pageX, 20 ));
-    $(".line.horizontal").css("top", Math.max( event.pageY, $("main").offset().top + 20 ));
+    $(".line.vertical").css("left", Math.max( event.pageX, 24 ));
+    $(".line.horizontal").css("top", Math.max( event.pageY, $("main").offset().top + 24 ));
   });
 
   $(window).on("keydown", function(event) {
 
+    // undo when they press ctrl+z
+    // redo on ctrl + y
     if((event.keyCode === 90) && (event.ctrlKey) && (that.undoStates.length > 1)) {
-      // undo when they press ctrl+z
-      var drawingCanvas = document.getElementById("drawing-canvas");
-      that.redoStates.unshift(that.undoStates.pop());
-      var returnToState = that.undoStates[that.undoStates.length - 1];
-      drawingCanvas.width = returnToState.width;
-      drawingCanvas.height = returnToState.height;
-      drawingCanvas.getContext("2d").drawImage(returnToState, 0, 0);
+      that.undo();
     } else if((event.keyCode === 89) && (event.ctrlKey) && (that.redoStates.length > 0)) {
-
-      //redo on ctrl + y
-      var drawingCanvas = document.getElementById("drawing-canvas");
-      var returnToState = that.redoStates[0];
-      drawingCanvas.width = returnToState.width;
-      drawingCanvas.height = returnToState.height;
-      drawingCanvas.getContext("2d").drawImage(returnToState, 0, 0);
-      that.undoStates.push(that.redoStates.shift());
+      that.redo();
     }
   })
 
+  $("button.undo").on("click", function(event) {
+    event.preventDefault();
+    that.undo();
+  });
+
+  $("button.redo").on("click", function(event) {
+    event.preventDefault();
+    that.redo();
+  });
 
   $("#drawing-canvas").on("mousedown", function(event){
     if(that.selected_sloth) {
@@ -276,12 +312,16 @@ SlothCanvas.prototype.start = function() {
     if($(event.currentTarget).hasClass("icon")) {
       that.selected_sloth = event.currentTarget;
 
-      var prepCtx = document.getElementById("prep_box").getContext("2d");
-      var fullCtx = document.getElementById("full_prep_box").getContext("2d");
+      var prepBox = document.getElementById("prep_box");
+      var fullPrep = document.getElementById("full_prep_box");
+
+      var prepCtx = prepBox.getContext("2d");
+      var fullCtx = fullPrep.getContext("2d");
       prepCtx.clearRect(0,0,100,100);
       fullCtx.clearRect(0,0,500,500);
+      // Should I not be hardcoding in the centers here?
       prepCtx.drawImage(that.selected_sloth, 35 - $(that.selected_sloth).width() / 2, 35 - $(that.selected_sloth).height() / 2);
-      fullCtx.drawImage(that.selected_sloth, 250 - $(that.selected_sloth).width() / 2, 250 - $(that.selected_sloth).height() / 2);
+      fullCtx.drawImage(that.selected_sloth, fullPrep.width / 2 - $(that.selected_sloth).width() / 2, fullPrep.height / 2 - $(that.selected_sloth).height() / 2);
       that.iconSize = 50; // The standard width of an icon
       that.angle = 0;
     }
@@ -292,6 +332,17 @@ SlothCanvas.prototype.start = function() {
     event.preventDefault();
     var drawingCanvas = document.getElementById("drawing-canvas");
     drawingCanvas.getContext("2d").clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+
+    var drawingCanvas = document.getElementById("drawing-canvas");
+    var newSavedState = document.createElement("canvas");
+    newSavedState.width = drawingCanvas.width;
+    newSavedState.height = drawingCanvas.height;
+    newSavedState.getContext("2d").drawImage(drawingCanvas, 0, 0);
+    that.undoStates.push(newSavedState);
+
+    if ( that.undoStates.length > 20 ) {
+      that.undoStates.shift();
+    }
   });
 
   $("a.save").on("click", function(event){
@@ -299,4 +350,11 @@ SlothCanvas.prototype.start = function() {
     var dataURL = document.getElementById("drawing-canvas").toDataURL('image/png').replace("image/png", "image/octet-stream");
     window.location.href = dataURL;
   });
+
+  $("button.closeup").on("click", function(event) {
+    event.preventDefault();
+    $(".prep-modal").addClass("active");
+    $(".wax-paper").addClass("shady");
+    // Break this out into a method.
+  })
 };
