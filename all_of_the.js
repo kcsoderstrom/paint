@@ -15,20 +15,28 @@ var SlothCanvas = function(canvasEl) {
   newSavedState.height = drawingCanvas.height;
   newSavedState.getContext("2d").drawImage(drawingCanvas, 0, 0);
   this.undoStates.push(newSavedState);
+  this.slider = null;
 };
 
 SlothCanvas.prototype.rotateCtx = function(obj) {
   var ctx = obj.canv.getContext("2d");
-
-  var angleOfOriginalClick = angleWithRespectTo(obj.lastClick, obj.center);
-  var angleOfThisClick = angleWithRespectTo(obj.thisClick, obj.center);
-
   var x = obj.canv.width / 2;
   var y = obj.canv.height / 2;
 
+  if(obj.angle || obj.angle === 0) {
+    this.tempAngle = parseFloat(obj.angle) * Math.PI / 180;
+    this.savedAngle = this.tempAngle;
+  } else if(obj.radAngle || obj.radAngle === 0){
+    this.tempAngle = obj.radAngle;
+    this.savedAngle = this.tempAngle;
+  } else {
+    var angleOfOriginalClick = angleWithRespectTo(obj.lastClick, obj.center);
+    var angleOfThisClick = angleWithRespectTo(obj.thisClick, obj.center);
+    this.tempAngle = angleOfThisClick - angleOfOriginalClick + this.savedAngle;
+  }
+
   ctx.translate( x, y );
-  this.tempAngle = angleOfThisClick - angleOfOriginalClick + this.savedAngle;
-  ctx.rotate( this.tempAngle);
+  ctx.rotate( this.tempAngle );
   ctx.translate( -x, -y);
 };
 
@@ -66,7 +74,6 @@ SlothCanvas.prototype.x = function () {
 SlothCanvas.prototype.y = function () {
   return this.last_pos[1];
 };
-
 
 // This is the most complicated and hardest to clarify
 // of any of the functions here.
@@ -151,6 +158,7 @@ SlothCanvas.prototype.redo = function () {
 SlothCanvas.prototype.start = function() {
   var mouse_is_down = false;
   var mouse_down_on_resize_button = false;
+  var mouse_down_on_prep_modal_menu = false
   var inMemCanvas = document.createElement('canvas');
   var inMemCtx = inMemCanvas.getContext("2d");
   var that = this;
@@ -195,6 +203,19 @@ SlothCanvas.prototype.start = function() {
 
         that.drawInBox("prep_box", brush);
         that.drawInBox("full_prep_box", brush);
+
+        var $scaleput = $("input#scale-factor");
+        var $angleput = $("input#angle");
+
+        $scaleput.val(that.tempScaleFactor * that.iconSize);
+        $angleput.val(that.tempAngle * 180 / Math.PI);
+
+        var scalePos = Math.max(Math.min($scaleput.val()/2.5, 100), 0);
+        var anglePos = Math.max(Math.min($angleput.val()/4.5, 100), 0);
+
+        $scaleput.closest("label").find(".slider").css("left", scalePos);
+        $angleput.closest("label").find(".slider").css("left", anglePos);
+
       }
     }
   };
@@ -239,8 +260,11 @@ SlothCanvas.prototype.start = function() {
       }
     }
 
+    // Reset everything.
     mouse_down_on_resize_button = false;
+    mouse_down_on_prep_modal_menu = false;
     mouse_is_down = false;
+    that.slider = null;
     that.prepPos = null;
     that.savedScaleFactor = that.tempScaleFactor;
     that.savedAngle = that.tempAngle;
@@ -251,6 +275,64 @@ SlothCanvas.prototype.start = function() {
     if(mouse_is_down && !that.prepPos && that.drawing) {
       if(that.selected_sloth) {
         that.draw(event);
+      }
+    } else if(mouse_down_on_prep_modal_menu) {
+      $(".prep-modal.menu").css("left", event.pageX + 100);
+      $(".prep-modal.menu").css("top", event.pageY - 10);
+      // Why do these numbers work?
+    } else if(that.slider) {
+      var $input = that.slider.closest("label").find("input");
+      var pos = Math.max(Math.min(event.pageX - that.slider.closest(".slidebar").offset().left, 100), 0)
+      that.slider.css("left", pos);
+
+      var full_original = new Image();
+      full_original.src = origImgs[ $(that.selected_sloth).attr("id")[7] ].src;
+
+      if($input.attr("id") === "scale-factor") {
+
+        $input.val(parseInt(pos) * 2.5);
+        that.tempScaleFactor = $input.val() / that.iconSize;
+        var newWidth = that.iconSize * that.tempScaleFactor;
+        var oldWidth = full_original.width;
+        var scaleBy = newWidth / oldWidth;
+        var newHeight = full_original.height * newWidth / full_original.width;
+        full_original.onload = function() {
+          brush.width = newWidth;
+          brush.height = newHeight;
+          var bctx = brush.getContext("2d");
+
+          var rotationParams = { canv: brush, radAngle: that.savedAngle };
+          that.rotateCtx(rotationParams);
+
+          bctx.scale(scaleBy, scaleBy);
+          bctx.drawImage(full_original,0,0);
+
+          that.drawInBox("prep_box", brush);
+          that.drawInBox("full_prep_box", brush);
+        }
+      } else if($input.attr("id") === "angle") {
+        full_original.onload = function() {
+
+          $input.val(parseInt(pos - 20) * 4.5);
+          var newWidth = that.iconSize * that.savedScaleFactor;
+          var oldWidth = full_original.width;
+          var scaleBy = newWidth / oldWidth;
+          var newHeight = full_original.height * newWidth / full_original.width;
+
+          brush.width = newWidth;
+          brush.height = newHeight;
+          var bctx = brush.getContext("2d");
+
+          var rotationParams = { canv: brush, angle: $input.val() };
+          that.rotateCtx(rotationParams);
+
+          var scaleBy = that.iconSize * that.savedScaleFactor / full_original.width;
+          bctx.scale(scaleBy, scaleBy);
+          bctx.drawImage(full_original,0,0);
+
+          that.drawInBox("prep_box", brush);
+          that.drawInBox("full_prep_box", brush);
+        }
       }
     } else if(mouse_down_on_resize_button) {
       var canv = document.getElementById("drawing-canvas");
@@ -263,18 +345,75 @@ SlothCanvas.prototype.start = function() {
       document.getElementById("drawing-canvas").width = event.pageX - $canv.offset().left;
       document.getElementById("drawing-canvas").height = event.pageY - $canv.offset().top;
       ctx.drawImage(inMemCanvas, 0, 0);
-
-      // var drawingCanvas = document.getElementById("drawing-canvas");
-      // var newSavedState = document.createElement("canvas");
-      // newSavedState.width = drawingCanvas.width;
-      // newSavedState.height = drawingCanvas.height;
-      // newSavedState.getContext("2d").drawImage(drawingCanvas, 0, 0);
-      // that.undoStates.push(newSavedState);
     }
 
     $(".line.vertical").css("top", $("main").offset().top);
     $(".line.vertical").css("left", Math.max( event.pageX, 24 ));
     $(".line.horizontal").css("top", Math.max( event.pageY, $("main").offset().top + 24 ));
+  });
+
+  $("input").on("keyup change", function(event) {
+    var $input = $(event.currentTarget);
+    var full_original = new Image();
+    full_original.src = origImgs[ $(that.selected_sloth).attr("id")[7] ].src;
+
+    if($input.attr("id") === "scale-factor") {
+      var pos = Math.max(Math.min($input.val()/2.5, 100), 0)
+      $input.closest("label").find(".slider").css("left", pos);
+
+      that.tempScaleFactor = $input.val() / that.iconSize;
+      var newWidth = that.iconSize * that.tempScaleFactor;
+      var oldWidth = full_original.width;
+      var scaleBy = newWidth / oldWidth;
+      var newHeight = full_original.height * newWidth / full_original.width;
+      full_original.onload = function() {
+        brush.width = newWidth;
+        brush.height = newHeight;
+        var bctx = brush.getContext("2d");
+
+        var rotationParams = { canv: brush, radAngle: that.savedAngle };
+        that.rotateCtx(rotationParams);
+
+        bctx.scale(scaleBy, scaleBy);
+        bctx.drawImage(full_original,0,0);
+
+        that.drawInBox("prep_box", brush);
+        that.drawInBox("full_prep_box", brush);
+      }
+    } else if($input.attr("id") === "angle") {
+      full_original.onload = function() {
+
+        var pos = Math.max(Math.min($input.val()/4.5, 100), 0)
+        $input.closest("label").find(".slider").css("left", pos);
+
+        var newWidth = that.iconSize * that.savedScaleFactor;
+        var oldWidth = full_original.width;
+        var scaleBy = newWidth / oldWidth;
+        var newHeight = full_original.height * newWidth / full_original.width;
+
+        brush.width = newWidth;
+        brush.height = newHeight;
+        var bctx = brush.getContext("2d");
+
+        var rotationParams = { canv: brush, angle: $input.val() };
+        that.rotateCtx(rotationParams);
+
+        var scaleBy = that.iconSize * that.savedScaleFactor / full_original.width;
+        bctx.scale(scaleBy, scaleBy);
+        bctx.drawImage(full_original,0,0);
+
+        that.drawInBox("prep_box", brush);
+        that.drawInBox("full_prep_box", brush);
+      }
+    }
+  });
+
+  $(".prep-modal.menu .handle").on("mousedown", function(event){
+    mouse_down_on_prep_modal_menu = true;
+  });
+
+  $(".slider").on("mousedown", function(event) {
+    that.slider = $(event.currentTarget);
   });
 
   $(window).on("keydown", function(event) {
@@ -324,6 +463,9 @@ SlothCanvas.prototype.start = function() {
       fullCtx.drawImage(that.selected_sloth, fullPrep.width / 2 - $(that.selected_sloth).width() / 2, fullPrep.height / 2 - $(that.selected_sloth).height() / 2);
       that.iconSize = 50; // The standard width of an icon
       that.angle = 0;
+      $("input#angle").val("0");
+      $("input#scale-factor").val("50");
+      $(".slider").css("left", 20);
     }
 
   });

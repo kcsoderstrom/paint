@@ -44,7 +44,7 @@
     <canvas id="drawing-canvas" width="200" height="200"></canvas>
     <button id="resize-canvas"></button>
   </main>
-  <footer>A client-side app by Heidi Et Al for Ben and Lizzie</footer>
+  <footer>A client-side app by KC Soderstrom for Ben and Lizzie</footer>
 
   <div class="wax-paper"></div>
   <section class="prep-modal">
@@ -52,10 +52,16 @@
   </section>
   <section class="prep-modal menu">
     <div class="handle"></div>
-    <label for="scale-factor">Size</label>
-    <input type="number" id="scale-factor">
-    <label for="angle">Rotation</angle>
-    <input type="number" id="angle">
+    <label>
+      <img src="./size.png" alt="Rotation" id="size-icon">
+      <div class="slidebar"><div class="slider"></div></div>
+      <input type="number" id="scale-factor" value="50">
+    </label>
+    <label>
+      <img src="./rotate.png" alt="Rotation" id="rotation-icon">
+      <div class="slidebar"><div class="slider"></div></div>
+      <input type="number" id="angle" value="0">
+    </label>
   </section>
 
   <script>
